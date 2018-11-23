@@ -22,9 +22,7 @@ class NeuralNetwork:
         if self.weights is None:
             self.generate_random_weights()
 
-
-        #self.mini_batch(X, Y)
-
+        self.mini_batch(X, Y)
 
     def backpropagation(self, X, Y, alphas):
 
@@ -38,24 +36,52 @@ class NeuralNetwork:
                 max = len(X)
             else:
                 max = ( (i + 1) * self.K)
-            self.backpropagation( X, Y, self.k_batch(X, i*self.K, max) )
+            self.k_batch(X, Y, i*self.K, max)
+            # print("mean alpha", mean_alpha)
+            # print("mean delta", mean_delta)
+            break
+            #self.backpropagation( X, Y,  )
 
 
-    def k_batch(self, X, min, max):
-        sum = []
+    def k_batch(self, X, Y, min, max):
+        #sum_alpha = []
+        #sum_delta = []
+        sum_gradient = []
         for i in range(min, max):
-            sum = np.sum([sum, self.forward_propagation( X.iloc[i] )], axis = 0 )
-        return sum / (max - min)
+            alphas = np.array(self.forward_propagation( X.iloc[i] ))
+            # sum_alpha = np.sum([sum_alpha, alphas ], axis = 0 )
+            deltas = np.array(self.backward_deltas( X.iloc[i], Y.iloc[i], alphas ))
+            # sum_delta = np.sum([sum_delta, deltas], axis = 0 )
+            print("============ k-batch ================")
+            print("alphas: ", alphas)
+            print("deltas: ", deltas )
+            print("============ k-batch ================")
+            self.weight_gradient(X.iloc[i], alphas, deltas)
+            #sum_gradient = np.sum( [sum_gradient, self.weight_gradient(alphas, deltas)], axis = 0 )
+            break
 
+        # return sum_alpha / (max - min), sum_delta / (max - min)
 
+    def weight_gradient(self, x, alphas, deltas):
+        print("len alpha", len(alphas))
+        print("len deltas", len(deltas))
+        print("len weights", len(self.weights))
+        gradients = []
+        aux = np.array(x)[np.newaxis]
+        print("aux weights", aux)
+        gradients.append(np.matmul(deltas[0], aux))
+        for i in range(len(alphas)-1):
+            gradients.append(np.matmul(deltas[i+1], alphas[i].T))
+        print("gradients", gradients)
 
     def generate_random_weights(self):
         self.weights = []
         for i in range(1, len(self.layers)):
             weights = []
             for j in range(int(self.layers[i])):
-                weights.append([random.uniform(-1, 1) for x in range(int(self.layers[i - 1]) + 1)])
-            self.weights.append(weights)
+                weights.append( [ random.uniform(-1, 1) for x in range(int(self.layers[i - 1]) + 1) ] )
+            self.weights.append(np.array(weights))
+        self.weights = np.array(self.weights)
 
     def function_g(self, values):
         return (1.0 / (1.0 + np.exp(-values) ) )
@@ -78,9 +104,44 @@ class NeuralNetwork:
         alphas = []
         alphas.append(self.function_g(self.result_matrix(self.weights[0], x)))
         for i in range(1, len(self.weights)):
-            alphas.append(self.function_g(self.result_matrix(self.weights[i], alphas[i - 1])))
-        return alphas
+            alphas.append( self.function_g(self.result_matrix(self.weights[i], alphas[i - 1])))
+        new_alphas = []
+        for i in range(len(alphas)-1):
+            aux = [[1.0]]
+            aux.extend( alphas[i] )
+            new_alphas.append( np.array(aux))
+        new_alphas.append(alphas[len(alphas)-1])
+        #print("new alphas", new_alphas)
+        return new_alphas
 
+    def backward_deltas(self, x, y, alphas):
+        deltas = []
+        deltas.append(self.delta_output(alphas[len(alphas)-1], y ))
+        for i in range(len(alphas)-1, 0, -1):
+            #print("==================================================================")
+            deltas = [self.delta_hidden(alphas[i-1], self.weights[i], deltas[0])] + deltas
+        aux = [1.0]
+        aux.extend(x)
+        aux = np.array(aux)[np.newaxis].T
+        print("aux", aux)
+        deltas = [self.delta_hidden(aux, self.weights[0], deltas[0])] + deltas
+        return deltas
+
+    def delta_hidden(self, alpha, weights, deltas):
+        # print("alpha", alpha)
+        # print("weight", weights)
+        # print("delta", deltas)
+        # print("weight*deltas", np.matmul(weights.T, deltas ))
+        delta = np.matmul(weights.T, deltas ) * alpha * (1 - alpha)
+        delta = delta[1:]
+        #print("calculated delta", delta)
+        return delta
+
+    def delta_output(self, alpha_output, real_output):
+        #print("log alpha output", -real_output * np.log2(alpha_output.T))
+        delta = np.array((-real_output * np.log2(alpha_output.T)) - (1 - real_output) * np.log2((1-alpha_output.T))).T
+        #print("delta_output", delta)
+        return delta
 
 
 if "__main__":
@@ -132,12 +193,10 @@ if "__main__":
         for i in labels:
             new_labels.append(new_dict[i])
         new_labels = pd.Series(new_labels)
-        print(new_labels.unique())
-        print(new_labels)
         return new_labels
 
 
     data = normalize(data)
-    one_hot_encode(labels)
+    labels = one_hot_encode(labels)
     nn = NeuralNetwork(layers=network_content[2:-1], lamb=network_content[0])
     nn.train(data, labels, total_labels)
