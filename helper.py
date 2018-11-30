@@ -3,14 +3,28 @@ import collections
 import numpy as np
 import pandas as pd
 
+def discretize(labels):
+    total_classe = len(labels.unique())
+    uniques = labels.unique()
+    new_labels = []
+    for label in labels:
+        for i in range(total_classe):
+            if label == uniques[i]:
+                new_labels.append(i)
+                break
+    return pd.Series(new_labels)
+
 def normalize(data, mean, std):
     data = (data - mean) / std
     return data
 
-def one_hot_decode(labels):
+def one_hot_decode(labels, encode_dict):
     new_labels = []
     for d in labels:
-        new_labels.append(np.argmax(d)+1)
+        # print(encode_dict)
+        for key, value in encode_dict.items():
+            if np.argmax(value) == np.argmax(d):
+                new_labels.append(key)
     return new_labels
 
 def one_hot_encode(labels):
@@ -24,7 +38,7 @@ def one_hot_encode(labels):
     for i in labels:
         new_labels.append(new_dict[i])
     new_labels = pd.Series(new_labels)
-    return new_labels
+    return new_labels, new_dict
 
 def recall(true, predicted):
     hit = [x for x, y in zip(true, predicted) if x == y]
@@ -80,4 +94,6 @@ def f1_score(true, predicted):
 def macro_f1_score(true, predicted):
     macro_p = macro_precision(true, predicted)
     macro_r = macro_recall(true, predicted)
+    if macro_p == 0 and macro_r == 0:
+        return 0
     return 2 * ((macro_p * macro_r)/(macro_p + macro_r))

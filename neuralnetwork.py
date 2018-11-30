@@ -22,17 +22,19 @@ class NeuralNetwork:
         self.layers = aux
         if self.weights is None:
             self.generate_random_weights()
-        self.check_gradient(X, Y)
-        # J = np.inf
-        # for i in range(self.max_iter):
-        #      aux_J = self.backpropagation(X, Y)
-        #      if i % 100 == 0:
-        #          print("J", J, "auxJ", aux_J)
-        #          print("diff", abs(J - aux_J))
-        #      if abs(J - aux_J) <= self.threshold:
-        #          print("Gatilho de parada", abs(J - aux_J))
-        #          break
-        #      J = aux_J
+        # self.check_gradient(X, Y)
+        J = np.inf
+        self.iter = 1
+        for i in range(self.max_iter):
+            self.iter += 1
+            aux_J = self.backpropagation(X, Y)
+            if i % 100 == 0:
+                print("J", J)
+                print("aux_J", aux_J)
+                print("Diff", abs(J - aux_J))
+            if abs(J - aux_J) <= self.threshold:
+                break
+            J = aux_J
 
     def predict(self, X):
         if X is not None and len(X) != 0:
@@ -102,10 +104,17 @@ class NeuralNetwork:
         return sum_gradient / (max - min), sum_j, sum_gradient
 
     def output_error(self, alpha_output, real_output):
-        error = np.array((-real_output * np.log2(alpha_output.T)) - (1 - real_output) * np.log2((1 - alpha_output.T))).T
+        error = np.array((-real_output * np.log(alpha_output.T)) - (1 - real_output) * np.log((1 - alpha_output.T))).T
         return error
 
-    def check_gradient(self, X, Y):
+    def check_gradient(self, X, Y, total_labels):
+
+        aux = [len(X.columns)]
+        aux.extend(self.layers)
+        aux.append(total_labels)
+        self.layers = aux
+        if self.weights is None or len(self.weights) == 0:
+            self.generate_random_weights()
 
         # calcula a estimativa numérica do gradiente
         numGrad = self.computeNumericalGradient(X, Y)
@@ -132,16 +141,18 @@ class NeuralNetwork:
             #print("sum: ", sum)
             sub = np.concatenate((sub, numGrad[p].ravel() - derGrad[p].ravel()), axis=0)
 
-        print("numGrad:", numGrad)
-        print("derGrad:", derGrad)
+        print("Numeric gradient:", numGrad)
+        print("Derivated gradient:", derGrad)
         #print("numGrad - derGrad", numGrad - derGrad)
         #print("numGrad + derGrad", numGrad + derGrad)
         diff = np.linalg.norm( sub ) / np.linalg.norm( sum )
 
         print("diff", diff)
         if diff < 10e-8:
+            print("Diff is on threshold {}".format(10e-8))
             return True
         else:
+            print("Diff is not on threshold {}".format(10e-8))
             return False
 
     def computeNumericalGradient(self, X, Y):
@@ -214,17 +225,13 @@ class NeuralNetwork:
         aux = np.array(aux)[np.newaxis]
         # print("aux weight_gradient: ", aux)
         gradients.append(np.matmul(deltas[0], aux))
-        print("aux: ", aux)
-        print("deltas[0]", deltas[0])
-        print("gradients", gradients)
         for i in range(len(alphas)-1):
             gradients.append(np.matmul(deltas[i+1], alphas[i].T))
         # print("gradients antes do for", len(gradients[0][0]))
-        # for i in range(len(gradients)):
-        #     aux = np.array(self.weights[i])
-        #     aux[:, 0] = 0
-        #     gradients[i] = gradients[i] + (self.lamb * aux)
-        # print("gradients", gradients)
+        for i in range(len(gradients)):
+            aux = np.array(self.weights[i])
+            aux[:, 0] = 0
+            gradients[i] = gradients[i] + (self.lamb * aux)
         return gradients
 
     def generate_random_weights(self):

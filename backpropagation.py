@@ -9,7 +9,8 @@ import helper
 from neuralnetwork import NeuralNetwork
 
 if "__main__":
-    random.seed(10)
+    nseed = 100
+    random.seed(nseed)
     network = sys.argv[1]
     network_content = []
     with open(network, 'r') as network_file_handler:
@@ -26,25 +27,18 @@ if "__main__":
                     neuron_weights.append(float(weight))
                 weights.append(neuron_weights)
             initial_weights.append(weights)
-    if len(initial_weights) != 0:
-        # generate_random weights
-        pass
     dataset_file = sys.argv[3]
     # WINE
     X = pd.read_csv(dataset_file, header=None, sep=',')
-    # Cria colunas
-    X.columns = ["TipoVinho", "Alcohol", "Malic acid", "Ash", "Alcalinity of ash", "Magnesium", "Total phenols",
-                    "Flavanoids", "Nonflavanoid phenols", "Proanthocyanins", "Color intensity", "Hue",
-                    "OD280/OD315 of diluted wines", "Proline"]
-
+    # TODO: colocar no relatório que nosso script considera última coluna como classes
     labels = X[X.columns[0]]
     total_labels = len(labels.unique() )
-    X = X.drop(X[X.columns[0:1]], axis=1)
+    X = X.drop(columns=X.columns[0])
 
-    X = helper.normalize(X)
+    X = helper.normalize(X, X.mean(), X.std())
+    # TODO: nosso script considera que as classes já estão numéricas
     labels = helper.one_hot_encode(labels)
-    nn = NeuralNetwork(layers=network_content[2:-1], lamb=network_content[0], max_iter=10000, learning_rate=0.001,
+    nn = NeuralNetwork(layers=network_content[2:-1], weights=initial_weights,
+                       lamb=0.0, max_iter=10000, learning_rate=0.001,
                        threshold=0.00001)
-    nn.train(X, labels, total_labels)
-    predicted = nn.predict(X)
-    print(predicted)
+    nn.check_gradient(X, labels, total_labels)
