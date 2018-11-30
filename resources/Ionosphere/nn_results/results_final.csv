@@ -1,0 +1,37 @@
+Test_num;Parameters;Precision;Recall;F1_Score
+0;{'layers': [70], 'learning_rate': 0.001, 'max_iter': 200};78.94;72.33;75.43
+1;{'layers': [70], 'learning_rate': 0.001, 'max_iter': 500};87.37;79.01;82.91
+2;{'layers': [70], 'learning_rate': 0.001, 'max_iter': 700};88.04;79.84;83.70
+3;{'layers': [70], 'learning_rate': 0.0001, 'max_iter': 200};53.21;57.35;53.95
+4;{'layers': [70], 'learning_rate': 0.0001, 'max_iter': 500};64.27;59.83;61.86
+5;{'layers': [70], 'learning_rate': 0.0001, 'max_iter': 700};63.98;61.34;62.54
+6;{'layers': [70], 'learning_rate': 1e-05, 'max_iter': 200};52.28;48.69;50.07
+7;{'layers': [70], 'learning_rate': 1e-05, 'max_iter': 500};55.20;51.19;52.93
+8;{'layers': [70], 'learning_rate': 1e-05, 'max_iter': 700};53.88;53.53;52.72
+9;{'layers': [50, 20], 'learning_rate': 0.001, 'max_iter': 200};66.18;54.32;59.52
+10;{'layers': [50, 20], 'learning_rate': 0.001, 'max_iter': 500};64.10;50.00;56.17
+11;{'layers': [50, 20], 'learning_rate': 0.001, 'max_iter': 700};64.10;50.00;56.17
+12;{'layers': [50, 20], 'learning_rate': 0.0001, 'max_iter': 200};58.40;51.53;53.40
+13;{'layers': [50, 20], 'learning_rate': 0.0001, 'max_iter': 500};54.75;52.70;53.37
+14;{'layers': [50, 20], 'learning_rate': 0.0001, 'max_iter': 700};66.31;56.20;60.36
+15;{'layers': [50, 20], 'learning_rate': 1e-05, 'max_iter': 200};46.52;47.76;46.07
+16;{'layers': [50, 20], 'learning_rate': 1e-05, 'max_iter': 500};62.86;55.55;58.76
+17;{'layers': [50, 20], 'learning_rate': 1e-05, 'max_iter': 700};44.96;47.44;44.50
+18;{'layers': [100, 100], 'learning_rate': 0.001, 'max_iter': 200};81.24;73.18;76.85
+19;{'layers': [100, 100], 'learning_rate': 0.001, 'max_iter': 500};85.80;71.43;77.88
+20;{'layers': [100, 100], 'learning_rate': 0.001, 'max_iter': 700};85.64;63.88;73.12
+21;{'layers': [100, 100], 'learning_rate': 0.0001, 'max_iter': 200};44.59;45.74;44.80
+22;{'layers': [100, 100], 'learning_rate': 0.0001, 'max_iter': 500};63.32;61.21;62.22
+23;{'layers': [100, 100], 'learning_rate': 0.0001, 'max_iter': 700};68.77;61.70;64.88
+24;{'layers': [100, 100], 'learning_rate': 1e-05, 'max_iter': 200};39.47;47.21;41.53
+25;{'layers': [100, 100], 'learning_rate': 1e-05, 'max_iter': 500};55.37;51.45;52.44
+26;{'layers': [100, 100], 'learning_rate': 1e-05, 'max_iter': 700};45.88;44.25;44.02
+27;{'layers': [200], 'learning_rate': 0.001, 'max_iter': 200};82.99;78.52;80.67
+28;{'layers': [200], 'learning_rate': 0.001, 'max_iter': 500};86.29;80.76;83.40
+29;{'layers': [200], 'learning_rate': 0.001, 'max_iter': 700};88.24;81.87;84.91
+30;{'layers': [200], 'learning_rate': 0.0001, 'max_iter': 200};56.76;58.19;57.37
+31;{'layers': [200], 'learning_rate': 0.0001, 'max_iter': 500};72.19;66.91;69.38
+32;{'layers': [200], 'learning_rate': 0.0001, 'max_iter': 700};70.69;68.67;69.64
+33;{'layers': [200], 'learning_rate': 1e-05, 'max_iter': 200};45.96;47.87;45.64
+34;{'layers': [200], 'learning_rate': 1e-05, 'max_iter': 500};50.85;50.03;50.18
+35;{'layers': [200], 'learning_rate': 1e-05, 'max_iter': 700};43.10;44.87;43.32

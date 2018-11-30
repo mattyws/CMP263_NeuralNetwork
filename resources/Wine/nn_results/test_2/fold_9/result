@@ -1,0 +1,10 @@
+Time took to train: 0.6399001320203145 minutes
+Number of iterations 701
+Ground truth: [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
+Predictions: [1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3]
+Precision per class: {1: 1.0, 2: 1.0, 3: 1.0}
+Recall per class: {1: 1.0, 2: 1.0, 3: 1.0}
+F1 Scrore per class: {1: 4.0, 2: 4.0, 3: 4.0}
+Macro precision: 100.00%
+Macro recall: 100.00%
+Macro F1 Score: 100.00%
